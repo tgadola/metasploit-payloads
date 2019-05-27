@@ -35,7 +35,7 @@
 #pragma comment (lib,"Delayimp.lib")
 
 // we use this like a macro to set the hook in an server extension that requires it
-#define EnableDelayLoadMetSrv() PfnDliHook __pfnDliNotifyHook2 = delayHook; // set our delay loader hook, see DelayLoadMetSrv.c
+#define EnableDelayLoadMetSrv() const PfnDliHook __pfnDliNotifyHook2 = delayHook; // set our delay loader hook, see DelayLoadMetSrv.c
 
 extern HMODULE hMetSrv;
 

@@ -42,16 +42,17 @@ extern int ftime(struct timeb *);
 #include <windows.h>
 #include "pythread.h"
 
+
 /* helper to allow us to interrupt sleep() on Windows*/
 static HANDLE hInterruptEvent = NULL;
-static BOOL WINAPI PyCtrlHandler(DWORD dwCtrlType)
+static BOOL __stdcall PyCtrlHandler(DWORD dwCtrlType)
 {
     SetEvent(hInterruptEvent);
     /* allow other default handlers to be called.
        Default Python handler will setup the
        KeyboardInterrupt exception.
     */
-    return FALSE;
+    return 0;
 }
 static long main_thread;
 
@@ -710,7 +711,7 @@ inittimezone(PyObject *m) {
 #ifdef PYOS_OS2
     PyModule_AddIntConstant(m, "timezone", _timezone);
 #else /* !PYOS_OS2 */
-    PyModule_AddIntConstant(m, "timezone", timezone);
+    PyModule_AddIntConstant(m, "timezone", _timezone);
 #endif /* PYOS_OS2 */
 #ifdef HAVE_ALTZONE
     PyModule_AddIntConstant(m, "altzone", altzone);
@@ -718,12 +719,12 @@ inittimezone(PyObject *m) {
 #ifdef PYOS_OS2
     PyModule_AddIntConstant(m, "altzone", _timezone-3600);
 #else /* !PYOS_OS2 */
-    PyModule_AddIntConstant(m, "altzone", timezone-3600);
+    PyModule_AddIntConstant(m, "altzone", _timezone-3600);
 #endif /* PYOS_OS2 */
 #endif
-    PyModule_AddIntConstant(m, "daylight", daylight);
+    PyModule_AddIntConstant(m, "daylight", _daylight);
     PyModule_AddObject(m, "tzname",
-                       Py_BuildValue("(zz)", tzname[0], tzname[1]));
+                       Py_BuildValue("(zz)", _tzname[0], _tzname[1]));
 #else /* !HAVE_TZNAME || __GLIBC__ || __CYGWIN__*/
 #ifdef HAVE_STRUCT_TM_TM_ZONE
     {
